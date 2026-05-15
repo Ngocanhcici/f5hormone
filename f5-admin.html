@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F5 Hormone — Trang quản trị Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sage:#8B9467;--sage-light:#F2F4ED;--sage-mid:#D4D9C4;
+  --sage-dark:#5A6147;--text:#1A1A14;--text-mid:#2E2E22;
+  --text-soft:#555545;--cream:#FAFAF7;--white:#fff;
+  --red:#e05c5c;--green:#5c9e6e;
+}
+body{font-family:'Inter',sans-serif;background:#F5F6F2;color:var(--text);font-size:15px;line-height:1.6}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+/* SIDEBAR */
+.sidebar{background:var(--sage-dark);padding:0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:24px 20px;border-bottom:0.5px solid rgba(255,255,255,.1)}
+.sidebar-logo-name{font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;font-weight:400}
+.sidebar-logo-sub{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:12px 20px;font-size:13px;color:rgba(255,255,255,.65);cursor:pointer;border-left:3px solid transparent;transition:all .15s}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#D4D9C4}
+.nav-icon{font-size:16px;flex-shrink:0}
+.nav-section{font-size:10px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;padding:20px 20px 6px}
+/* MAIN */
+.main{padding:32px 36px;overflow-y:auto}
+.page-section{display:none}
+.page-section.active{display:block}
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--text)}
+.page-sub{font-size:13px;color:var(--text-soft);margin-top:2px}
+/* CARDS */
+.card{background:var(--white);border-radius:16px;border:0.5px solid var(--sage-mid);padding:24px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title .badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:100px}
+.badge-green{background:#e8f5ed;color:#2d7a4f}
+.badge-red{background:#fdeaea;color:#c0392b}
+.badge-yellow{background:#fef9e7;color:#b7860b}
+/* FORM */
+label{display:block;font-size:12px;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;margin-top:16px}
+label:first-of-type{margin-top:0}
+input[type=text],input[type=url],input[type=date],select,textarea{
+  width:100%;border:1px solid var(--sage-mid);border-radius:10px;
+  padding:10px 14px;font-size:14px;font-family:'Inter',sans-serif;
+  color:var(--text);background:var(--cream);outline:none;transition:border-color .2s
+}
+input:focus,select:focus,textarea:focus{border-color:var(--sage)}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+/* BUTTONS */
+.btn{background:var(--sage);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;transition:opacity .2s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{opacity:.88}
+.btn-outline{background:transparent;border:1.5px solid var(--sage-mid);color:var(--text-mid);border-radius:10px;padding:9px 18px;font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s}
+.btn-outline:hover{border-color:var(--sage);color:var(--sage-dark)}
+.btn-red{background:#e05c5c}
+.btn-green{background:#5c9e6e}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:11px;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:10px 14px;border-bottom:1px solid var(--sage-mid)}
+.tbl td{font-size:13px;color:var(--text-mid);padding:12px 14px;border-bottom:0.5px solid var(--sage-light);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#FAFDF7}
+/* TAG */
+.tag{display:inline-block;font-size:11px;font-weight:500;padding:3px 8px;border-radius:6px;background:var(--sage-light);color:var(--sage-dark)}
+/* STEP */
+.step{display:flex;gap:12px;align-items:flex-start;margin-bottom:20px}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--sage);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;margin-top:2px}
+.step-content{flex:1}
+.step-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.step-desc{font-size:13px;color:var(--text-soft);line-height:1.6}
+/* CODE */
+.code-block{background:#2C2C24;border-radius:10px;padding:16px;font-family:'Courier New',monospace;font-size:12px;color:#C4D4A0;line-height:1.7;overflow-x:auto;margin:10px 0;position:relative}
+.code-copy{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.6);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif}
+.code-copy:hover{background:rgba(255,255,255,.2)}
+/* ALERT */
+.alert{border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.6;margin-bottom:16px}
+.alert-blue{background:#EBF4FF;color:#1a5276;border-left:3px solid #3498db}
+.alert-green{background:#e8f5ed;color:#1e6b3f;border-left:3px solid #27ae60}
+.alert-yellow{background:#fef9e7;color:#7d5a0d;border-left:3px solid #f39c12}
+/* SHEET PREVIEW */
+.sheet-col{display:inline-block;background:var(--sage-light);color:var(--sage-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;margin:2px;font-family:'Courier New',monospace}
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:var(--white);border-radius:14px;border:0.5px solid var(--sage-mid);padding:18px;text-align:center}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:400;color:var(--sage-dark);line-height:1}
+.stat-label{font-size:12px;color:var(--text-soft);margin-top:4px}
+/* RESPONSIVE */
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .main{padding:20px 16px}
+  .form-row,.form-row3{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#2C2C24;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;transform:translateY(80px);opacity:0;transition:all .3s;z-index:999}
+.toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-name">F5 Hormone</div>
+    <div class="sidebar-logo-sub">Trang quản trị</div>
+  </div>
+  <div class="nav-section">Nội dung</div>
+  <div class="nav-item active" onclick="showPage('blog')">
+    <span class="nav-icon">📝</span> Quản lý Blog
+  </div>
+  <div class="nav-item" onclick="showPage('add')">
+    <span class="nav-icon">✏️</span> Viết bài mới
+  </div>
+  <div class="nav-section">Hướng dẫn</div>
+  <div class="nav-item" onclick="showPage('guide-sheet')">
+    <span class="nav-icon">📊</span> Google Sheets CMS
+  </div>
+  <div class="nav-item" onclick="showPage('guide-format')">
+    <span class="nav-icon">📐</span> Format bài viết
+  </div>
+  <div class="nav-item" onclick="showPage('guide-category')">
+    <span class="nav-icon">🏷️</span> Danh mục & Tag
+  </div>
+  <div class="nav-section">Khác</div>
+  <div class="nav-item" onclick="window.open('f5-hormone-optimized.html')">
+    <span class="nav-icon">🌐</span> Xem website
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ═══ BLOG LIST ═══ -->
+<div id="page-blog" class="page-section active">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Quản lý Blog</div>
+      <div class="page-sub">Tất cả bài viết từ Google Sheets</div>
+    </div>
+    <button class="btn" onclick="showPage('add')">✏️ Viết bài mới</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">Bài viết mẫu</div></div>
+    <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Danh mục</div></div>
+    <div class="stat-card"><div class="stat-num">📊</div><div class="stat-label">Google Sheets CMS</div></div>
+    <div class="stat-card"><div class="stat-num">✓</div><div class="stat-label">Đã kết nối</div></div>
+  </div>
+
+  <div class="alert alert-blue">
+    💡 Blog được tải tự động từ Google Sheets. Để thêm bài mới, điền vào Sheet rồi lưu — website tự cập nhật ngay, không cần đụng code.
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Bài viết hiện có <span class="badge badge-green">6 bài</span></div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Tiêu đề</th><th>Danh mục</th><th>Ngày</th><th>Trạng thái</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Tại sao bạn mệt đúng giờ mỗi ngày?</strong></td><td><span class="tag">Nhịp sinh học</span></td><td>01/05/2026</td><td><span class="badge badge-green">✓ Live</span></td><td><button class="btn-outline" style="font-size:12px;padding:5px 12px" onclick="showPage('add')">Sửa</button></td></tr>
+        <tr><td><strong>Seed cycling có thực sự hiệu quả không?</strong></td><td><span class="tag">Dinh dưỡng</span></td><td>20/04/2026</td><td><span class="badge badge-green">✓ Live</span></td><td><button class="btn-outline" style="font-size:12px;padding:5px 12px" onclick="showPage('add')">Sửa</button></td></tr>
+        <tr><td><strong>Tại sao thèm ngọt điên cuồng trước kỳ kinh?</strong></td><td><span class="tag">Đường huyết</span></td><td>10/04/2026</td><td><span class="badge badge-green">✓ Live</span></td><td><button class="btn-outline" style="font-size:12px;padding:5px 12px" onclick="showPage('add')">Sửa</button></td></tr>
+        <tr><td><strong>Stress mãn tính có thể khiến bạn mất kinh</strong></td><td><span class="tag">Stress</span></td><td>01/04/2026</td><td><span class="badge badge-green">✓ Live</span></td><td><button class="btn-outline" style="font-size:12px;padding:5px 12px" onclick="showPage('add')">Sửa</button></td></tr>
+        <tr><td><strong>Tại sao ngủ trước 11h tối lại quan trọng?</strong></td><td><span class="tag">Nhịp sinh học</span></td><td>20/03/2026</td><td><span class="badge badge-green">✓ Live</span></td><td><button class="btn-outline" style="font-size:12px;padding:5px 12px" onclick="showPage('add')">Sửa</button></td></tr>
+        <tr><td><strong>Gan xử lý estrogen như thế nào?</strong></td><td><span class="tag">Dinh dưỡng</span></td><td>10/03/2026</td><td><span class="badge badge-green">✓ Live</span></td><td><button class="btn-outline" style="font-size:12px;padding:5px 12px" onclick="showPage('add')">Sửa</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔗 Link Google Sheets đang kết nối</div>
+    <div class="code-block">
+      https://docs.google.com/spreadsheets/d/e/2PACX-1vQOGdv2B-lpjRd-WAZiQwqfzsyZc7zipzjiDES9o8RpwANYleHligVMgUDcSQS8Yv0BD5gmS_-RDhDV/pub?gid=0&single=true&output=csv
+      <button class="code-copy" onclick="copyText(this.previousSibling.textContent.trim())">Copy</button>
+    </div>
+    <button class="btn btn-green" onclick="window.open('https://docs.google.com/spreadsheets/d/e/2PACX-1vQOGdv2B-lpjRd-WAZiQwqfzsyZc7zipzjiDES9o8RpwANYleHligVMgUDcSQS8Yv0BD5gmS_-RDhDV/pubhtml?gid=0&single=true')">📊 Mở Google Sheets</button>
+  </div>
+</div>
+
+<!-- ═══ ADD POST ═══ -->
+<div id="page-add" class="page-section">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Viết bài mới</div>
+      <div class="page-sub">Điền form bên dưới → copy vào Google Sheets</div>
+    </div>
+    <button class="btn-outline" onclick="showPage('blog')">← Quay lại</button>
+  </div>
+
+  <div class="alert alert-yellow">
+    ⚡ Quy trình: Điền form → Bấm "Tạo dòng Sheets" → Copy dòng đó vào Google Sheets → Lưu → Website tự cập nhật!
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 Thông tin bài viết</div>
+    <div class="form-row">
+      <div>
+        <label>Tiêu đề bài viết *</label>
+        <input type="text" id="f-title" placeholder="Ví dụ: Tại sao bạn mệt đúng giờ mỗi ngày?">
+      </div>
+      <div>
+        <label>Danh mục *</label>
+        <select id="f-cat">
+          <option value="nhip">Nhịp sinh học</option>
+          <option value="dinh">Dinh dưỡng</option>
+          <option value="duong">Đường huyết</option>
+          <option value="stress">Stress</option>
+          <option value="niemtin">Niềm tin</option>
+        </select>
+      </div>
+    </div>
+    <label>Mô tả ngắn (hiện dưới tiêu đề) *</label>
+    <textarea id="f-excerpt" rows="2" placeholder="Ví dụ: Cortisol và melatonin bị đảo lộn bởi lối sống hiện đại - đây là cách khắc phục..."></textarea>
+    <div class="form-row">
+      <div>
+        <label>Chữ hiện trên ảnh thumbnail</label>
+        <input type="text" id="f-thumb" placeholder="Ví dụ: Nhịp sinh học & hormone">
+      </div>
+      <div>
+        <label>Ngày đăng</label>
+        <input type="date" id="f-date">
+      </div>
+    </div>
+    <label>Link bài viết đầy đủ (nếu có)</label>
+    <input type="url" id="f-link" placeholder="https://... (để trống nếu chưa có)">
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Dòng để copy vào Google Sheets</div>
+    <div id="preview-row" style="color:var(--text-soft);font-size:13px;font-style:italic">Điền thông tin bên trên rồi bấm nút để tạo dòng.</div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" onclick="generateRow()">⚡ Tạo dòng Sheets</button>
+      <button class="btn btn-green" onclick="copyRow()">📋 Copy dòng</button>
+      <button class="btn-outline" onclick="openSheets()">📊 Mở Google Sheets</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📐 Thứ tự các cột trong Google Sheets</div>
+    <div style="margin-bottom:10px">
+      <span class="sheet-col">A: title</span>
+      <span class="sheet-col">B: excerpt</span>
+      <span class="sheet-col">C: category</span>
+      <span class="sheet-col">D: thumb</span>
+      <span class="sheet-col">E: date</span>
+      <span class="sheet-col">F: link</span>
+    </div>
+    <div style="font-size:13px;color:var(--text-soft)">Hàng đầu tiên là header (tên cột). Từ hàng 2 trở đi là bài viết.</div>
+  </div>
+</div>
+
+<!-- ═══ GUIDE SHEETS ═══ -->
+<div id="page-guide-sheet" class="page-section">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Hướng dẫn Google Sheets CMS</div>
+      <div class="page-sub">Cách quản lý blog qua bảng tính</div>
+    </div>
+  </div>
+
+  <div class="alert alert-green">
+    ✅ Blog F5 Hormone đã kết nối với Google Sheets. Chỉ cần cập nhật Sheet là website tự cập nhật — không cần đụng code.
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Cấu trúc Google Sheet — 6 cột bắt buộc</div>
+    <table class="tbl">
+      <thead><tr><th>Cột</th><th>Tên</th><th>Mô tả</th><th>Ví dụ</th></tr></thead>
+      <tbody>
+        <tr><td><span class="sheet-col">A</span></td><td><strong>title</strong></td><td>Tiêu đề bài viết</td><td>Tại sao bạn mệt đúng giờ mỗi ngày?</td></tr>
+        <tr><td><span class="sheet-col">B</span></td><td><strong>excerpt</strong></td><td>Mô tả ngắn 1-2 câu</td><td>Cortisol và melatonin bị đảo lộn...</td></tr>
+        <tr><td><span class="sheet-col">C</span></td><td><strong>category</strong></td><td>Mã danh mục (xem bên dưới)</td><td>nhip</td></tr>
+        <tr><td><span class="sheet-col">D</span></td><td><strong>thumb</strong></td><td>Chữ hiện trên ảnh bìa</td><td>Nhịp sinh học & hormone</td></tr>
+        <tr><td><span class="sheet-col">E</span></td><td><strong>date</strong></td><td>Ngày đăng</td><td>01/05/2026</td></tr>
+        <tr><td><span class="sheet-col">F</span></td><td><strong>link</strong></td><td>Link bài đầy đủ (hoặc để #)</td><td>https://... hoặc #</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔄 Quy trình đăng bài mới — 4 bước</div>
+    <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">Mở Google Sheets</div><div class="step-desc">Vào link Sheet đang kết nối với website. Xem tab "Quản lý Blog" để lấy link nhanh.</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Thêm hàng mới</div><div class="step-desc">Bấm vào ô trống ở cuối bảng. Điền đủ 6 cột: title, excerpt, category, thumb, date, link.</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Lưu Sheet</div><div class="step-desc">Google Sheets tự lưu. Bài viết sẽ hiện trên website sau khoảng 1-5 phút (cache).</div></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Kiểm tra website</div><div class="step-desc">Vào trang Blog → Ctrl+F5 (refresh mạnh) để thấy bài mới. Bấm vào bài để đọc nội dung.</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ Lưu ý quan trọng</div>
+    <ul style="font-size:13px;color:var(--text-mid);line-height:1.9;padding-left:18px">
+      <li>Hàng đầu tiên <strong>phải</strong> là tên cột: title, excerpt, category, thumb, date, link</li>
+      <li>Cột <strong>category</strong> chỉ nhận một trong 5 giá trị: <code style="background:var(--sage-light);padding:1px 6px;border-radius:4px;font-size:12px">nhip</code> <code style="background:var(--sage-light);padding:1px 6px;border-radius:4px;font-size:12px">dinh</code> <code style="background:var(--sage-light);padding:1px 6px;border-radius:4px;font-size:12px">duong</code> <code style="background:var(--sage-light);padding:1px 6px;border-radius:4px;font-size:12px">stress</code> <code style="background:var(--sage-light);padding:1px 6px;border-radius:4px;font-size:12px">niemtin</code></li>
+      <li>Không để trống cột <strong>title</strong> — bài sẽ không hiện</li>
+      <li>Cột <strong>link</strong> có thể để <code style="background:var(--sage-light);padding:1px 6px;border-radius:4px;font-size:12px">#</code> nếu chưa có link bài đầy đủ</li>
+      <li>Nếu website không cập nhật: thử Ctrl+Shift+R (hard refresh)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Ví dụ 1 hàng dữ liệu mẫu</div>
+    <div class="code-block">
+Tại sao bạn mệt đúng giờ mỗi ngày?	Cortisol và melatonin bị đảo lộn bởi lối sống hiện đại	nhip	Nhịp sinh học & hormone	01/05/2026	#
+      <button class="code-copy" onclick="copyText('Tại sao bạn mệt đúng giờ mỗi ngày?\tCortisol và melatonin bị đảo lộn bởi lối sống hiện đại\tnhip\tNhịp sinh học & hormone\t01/05/2026\t#')">Copy</button>
+    </div>
+    <div style="font-size:12px;color:var(--text-soft);margin-top:6px">💡 Các cột cách nhau bằng Tab. Khi paste vào Google Sheets sẽ tự vào đúng cột.</div>
+  </div>
+</div>
+
+<!-- ═══ GUIDE FORMAT ═══ -->
+<div id="page-guide-format" class="page-section">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Format bài viết</div>
+      <div class="page-sub">Hướng dẫn viết nội dung đúng chuẩn</div>
+    </div>
+  </div>
+
+  <div class="alert alert-blue">
+    💡 Nội dung bài viết đầy đủ hiện đang được viết trực tiếp trong code website (file HTML). Nếu muốn thêm nội dung bài mới, cần cập nhật biến <code style="background:#dbeafe;padding:1px 6px;border-radius:4px">ART</code> trong file HTML hoặc dùng Google Docs → mình có thể hỗ trợ tích hợp thêm.
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 Cấu trúc 1 bài viết chuẩn</div>
+    <div class="step"><div class="step-num">1</div><div class="step-content"><div class="step-title">Mở đầu — Hook</div><div class="step-desc">1-2 câu ngắn đặt vấn đề mà độc giả đang gặp. Ví dụ: "Bạn có bao giờ nhận ra mình mệt vào đúng một giờ nhất định mỗi ngày không?"</div></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><div class="step-title">Giải thích cơ chế</div><div class="step-desc">Dùng &lt;h2&gt; cho các tiêu đề phụ. Giải thích ngắn gọn bằng ngôn ngữ dễ hiểu — tránh thuật ngữ y học phức tạp.</div></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><div class="step-title">Quote nổi bật</div><div class="step-desc">Dùng &lt;blockquote&gt; cho 1 câu quan trọng nhất trong bài. Đây là phần độc giả hay nhớ nhất.</div></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><div class="step-title">Hành động thực tế</div><div class="step-desc">Dùng &lt;ul&gt; &lt;li&gt; để liệt kê 3-5 điều độc giả có thể làm ngay hôm nay.</div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏷️ HTML tags có thể dùng trong nội dung</div>
+    <table class="tbl">
+      <thead><tr><th>Tag</th><th>Dùng cho</th><th>Ví dụ</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;h2&gt;</code></td><td>Tiêu đề phụ</td><td><code>&lt;h2&gt;Cortisol là gì?&lt;/h2&gt;</code></td></tr>
+        <tr><td><code>&lt;p&gt;</code></td><td>Đoạn văn</td><td><code>&lt;p&gt;Nội dung...&lt;/p&gt;</code></td></tr>
+        <tr><td><code>&lt;strong&gt;</code></td><td>In đậm từ quan trọng</td><td><code>&lt;strong&gt;Cortisol&lt;/strong&gt;</code></td></tr>
+        <tr><td><code>&lt;em&gt;</code></td><td>In nghiêng</td><td><code>&lt;em&gt;rất quan trọng&lt;/em&gt;</code></td></tr>
+        <tr><td><code>&lt;blockquote&gt;</code></td><td>Quote nổi bật</td><td><code>&lt;blockquote&gt;Câu hay nhất...&lt;/blockquote&gt;</code></td></tr>
+        <tr><td><code>&lt;ul&gt;&lt;li&gt;</code></td><td>Danh sách</td><td><code>&lt;ul&gt;&lt;li&gt;Mục 1&lt;/li&gt;&lt;/ul&gt;</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📏 Độ dài lý tưởng</div>
+    <table class="tbl">
+      <thead><tr><th>Loại bài</th><th>Độ dài</th><th>Thời gian đọc</th></tr></thead>
+      <tbody>
+        <tr><td>Bài ngắn (tip nhanh)</td><td>300-500 chữ</td><td>2-3 phút</td></tr>
+        <tr><td>Bài trung bình (giải thích)</td><td>600-900 chữ</td><td>4-5 phút</td></tr>
+        <tr><td>Bài sâu (deep dive)</td><td>1000-1500 chữ</td><td>6-8 phút</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ GUIDE CATEGORY ═══ -->
+<div id="page-guide-category" class="page-section">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Danh mục & Tag</div>
+      <div class="page-sub">5 danh mục chính của F5 Hormone</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏷️ 5 Danh mục — Mã dùng trong Google Sheets</div>
+    <table class="tbl">
+      <thead><tr><th>Mã (gõ vào Sheets)</th><th>Tên hiển thị</th><th>Nội dung phù hợp</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="sheet-col">nhip</span></td>
+          <td><strong>Nhịp sinh học</strong></td>
+          <td>Giấc ngủ, cortisol, melatonin, lịch sinh hoạt theo chu kỳ, ánh sáng ban ngày</td>
+        </tr>
+        <tr>
+          <td><span class="sheet-col">dinh</span></td>
+          <td><strong>Dinh dưỡng</strong></td>
+          <td>Seed cycling, thực phẩm hỗ trợ hormone, chất béo lành mạnh, gan & estrogen</td>
+        </tr>
+        <tr>
+          <td><span class="sheet-col">duong</span></td>
+          <td><strong>Đường huyết</strong></td>
+          <td>Insulin, thèm ngọt, đường huyết ổn định, bữa sáng, thực phẩm chỉ số GI thấp</td>
+        </tr>
+        <tr>
+          <td><span class="sheet-col">stress</span></td>
+          <td><strong>Stress</strong></td>
+          <td>Cortisol mãn tính, trục HPA, mất kinh do stress, adaptogen, yoga & thiền</td>
+        </tr>
+        <tr>
+          <td><span class="sheet-col">niemtin</span></td>
+          <td><strong>Niềm tin</strong></td>
+          <td>Niềm tin hạn chế về hormone, tại sao đã thử không hiệu quả, tư duy về sức khỏe</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💡 Gợi ý chủ đề bài viết theo danh mục</div>
+    <div class="form-row">
+      <div>
+        <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:8px">🌙 Nhịp sinh học</div>
+        <ul style="font-size:13px;color:var(--text-soft);line-height:1.9;padding-left:16px">
+          <li>Tại sao ngủ trước 11h quan trọng</li>
+          <li>Uống cà phê lúc nào tốt nhất</li>
+          <li>Tập gym buổi sáng hay tối tốt hơn</li>
+          <li>Pha Follicular và Luteal khác nhau thế nào</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:8px">🌿 Dinh dưỡng</div>
+        <ul style="font-size:13px;color:var(--text-soft);line-height:1.9;padding-left:16px">
+          <li>Top 5 thực phẩm hỗ trợ progesterone</li>
+          <li>Omega-3 và hormone sinh sản</li>
+          <li>Rau họ cải và estrogen dư thừa</li>
+          <li>Thực đơn 1 tuần hỗ trợ hormone</li>
+        </ul>
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:16px">
+      <div>
+        <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:8px">🍫 Đường huyết</div>
+        <ul style="font-size:13px;color:var(--text-soft);line-height:1.9;padding-left:16px">
+          <li>Ăn sáng như thế nào để không thèm ngọt</li>
+          <li>Dấu hiệu kháng insulin ở phụ nữ trẻ</li>
+          <li>Tại sao bỏ bữa lại phản tác dụng</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:8px">😤 Stress & Niềm tin</div>
+        <ul style="font-size:13px;color:var(--text-soft);line-height:1.9;padding-left:16px">
+          <li>Ashwagandha có thực sự hiệu quả không</li>
+          <li>Tại sao tập gym nhiều lại hại hormone</li>
+          <li>Hormone quiz giải thích điều gì về bạn</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.currentTarget && event.currentTarget.classList.add('active');
+  // Fix nav active state
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if(n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) {
+      n.classList.add('active');
+    }
+  });
+}
+
+function generateRow() {
+  const title = document.getElementById('f-title').value.trim();
+  const cat = document.getElementById('f-cat').value;
+  const excerpt = document.getElementById('f-excerpt').value.trim();
+  const thumb = document.getElementById('f-thumb').value.trim() || title;
+  const date = document.getElementById('f-date').value;
+  const link = document.getElementById('f-link').value.trim() || '#';
+
+  if(!title) { showToast('⚠️ Hãy nhập tiêu đề bài viết!'); return; }
+  if(!excerpt) { showToast('⚠️ Hãy nhập mô tả ngắn!'); return; }
+
+  // Format date dd/mm/yyyy
+  let dateStr = date;
+  if(date) {
+    const d = new Date(date);
+    dateStr = d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getFullYear();
+  }
+
+  const row = `${title}\t${excerpt}\t${cat}\t${thumb}\t${dateStr}\t${link}`;
+  window._generatedRow = row;
+
+  document.getElementById('preview-row').innerHTML = `
+    <div style="background:#F9FBF7;border:1px solid var(--sage-mid);border-radius:8px;padding:12px;font-family:'Courier New',monospace;font-size:12px;color:var(--text);line-height:1.8;word-break:break-all">
+      <span style="color:#5c9e6e;font-weight:600">✓ Dòng đã tạo:</span><br>
+      <strong>title:</strong> ${title}<br>
+      <strong>excerpt:</strong> ${excerpt}<br>
+      <strong>category:</strong> ${cat}<br>
+      <strong>thumb:</strong> ${thumb}<br>
+      <strong>date:</strong> ${dateStr}<br>
+      <strong>link:</strong> ${link}
+    </div>
+  `;
+  showToast('✅ Đã tạo dòng! Bấm Copy để copy vào Sheets.');
+}
+
+function copyRow() {
+  if(!window._generatedRow) { showToast('⚠️ Bấm "Tạo dòng Sheets" trước!'); return; }
+  navigator.clipboard.writeText(window._generatedRow).then(() => {
+    showToast('📋 Đã copy! Paste vào Google Sheets nhé.');
+  });
+}
+
+function openSheets() {
+  window.open('https://docs.google.com/spreadsheets/d/e/2PACX-1vQOGdv2B-lpjRd-WAZiQwqfzsyZc7zipzjiDES9o8RpwANYleHligVMgUDcSQS8Yv0BD5gmS_-RDhDV/pubhtml?gid=0&single=true');
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Đã copy!'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Set today's date as default
+document.getElementById('f-date').valueAsDate = new Date();
+</script>
+</body>
+</html>
